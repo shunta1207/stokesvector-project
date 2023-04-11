@@ -1,0 +1,109 @@
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+folder_name = "graph"
+if not os.path.exists(folder_name):
+    os.mkdir(folder_name)
+
+plt.rcParams['font.family'] = 'Times New Roman'
+
+datadir = "data/"
+files = os.listdir(datadir) 
+
+for file in files:
+    fig = plt.figure()
+
+    if file.endswith("conste.csv"):
+        fig = plt.figure(figsize=(8, 8))
+        ax = fig.add_subplot(111, projection = '3d')
+        S1 = np.genfromtxt(os.path.join('data', file), delimiter=",", skip_header = 1, usecols = [1], dtype = float)
+        S2 = np.genfromtxt(os.path.join('data', file), delimiter=",", skip_header = 1, usecols = [2], dtype = float)
+        S3 = np.genfromtxt(os.path.join('data', file), delimiter=",", skip_header = 1, usecols = [3], dtype = float)
+        
+        # delete".csv"
+        name = os.path.splitext(file)[0]
+        ax.set_xlabel('S1', fontsize="22")
+        ax.set_ylabel('S2', fontsize="22")
+        ax.set_zlabel('S3', fontsize="22")
+        r = 1.0 
+        #theta = np.linspace(0, np.pi/2, 50)
+        #phi = np.linspace(0, np.pi/2, 50) 
+        theta,phi = np.mgrid[0:2*np.pi:50j, -np.pi/2:np.pi/2:50j] #mgrid
+        x = r * np.cos(phi)*np.cos(theta)
+        y = r * np.cos(phi)*np.sin(theta)           
+        z = r * np.sin(phi)
+        ax.plot_wireframe(x,y,z, color = "gray", alpha = 0.3)
+
+        ax.axes.xaxis.set_ticklabels([])
+        ax.axes.yaxis.set_ticklabels([])
+        ax.axes.zaxis.set_ticklabels([])
+        ax.w_xaxis.line.set_visible(False)
+        ax.w_yaxis.line.set_visible(False)
+        ax.w_zaxis.line.set_visible(False)   
+
+        ax.scatter(S1, S2 ,S3, color = 'fuchsia', marker = '.',s = 10)
+        ax.set_box_aspect((1,1,1))
+        plt.tight_layout()
+        ax.view_init(elev = 15, azim = 40)
+        pngfile = name + ".png"
+        file_path = os.path.join(folder_name, pngfile)
+        fig.savefig(file_path)
+
+        plt.close(fig)
+
+    elif file.endswith("centroids.csv"):
+        fig = plt.figure(figsize=(8, 8))
+        ax = fig.add_subplot(111, projection = '3d')
+        groups = np.genfromtxt(os.path.join('data', file), delimiter=",", skip_header = 1, usecols = [0], dtype = float)
+        S1 = np.genfromtxt(os.path.join('data', file), delimiter=",", skip_header = 1, usecols = [2], dtype = float)
+        S2 = np.genfromtxt(os.path.join('data', file), delimiter=",", skip_header = 1, usecols = [3], dtype = float)
+        S3 = np.genfromtxt(os.path.join('data', file), delimiter=",", skip_header = 1, usecols = [4], dtype = float)
+
+        # delete".csv"
+        name = os.path.splitext(file)[0]
+        ax.set_xlabel('S1', fontsize="22")
+        ax.set_ylabel('S2', fontsize="22")
+        ax.set_zlabel('S3', fontsize="22")
+        r = 1.0 
+        #theta = np.linspace(0, np.pi/2, 50)
+        #phi = np.linspace(0, np.pi/2, 50) 
+        theta,phi = np.mgrid[0:2*np.pi:50j, -np.pi/2:np.pi/2:50j] #mgrid
+        x = r * np.cos(phi)*np.cos(theta)
+        y = r * np.cos(phi)*np.sin(theta)           
+        z = r * np.sin(phi)
+        ax.plot_wireframe(x,y,z, color = "gray", linewidth = 0.2, alpha = 0.3)
+
+        '''
+        r = 2.0
+        #theta = np.linspace(0, np.pi/2, 50)
+        #phi = np.linspace(0, np.pi/2, 50) 
+        theta,phi = np.mgrid[0:2*np.pi:50j, -np.pi/2:np.pi/2:50j] #mgrid
+        x = r * np.cos(phi)*np.cos(theta)
+        y = r * np.cos(phi)*np.sin(theta)           
+        z = r * np.sin(phi)
+        ax.plot_wireframe(x,y,z, color = "gray", linewidth = 0.2, alpha = 0.3)
+        '''
+
+        ax.axes.xaxis.set_ticklabels([])
+        ax.axes.yaxis.set_ticklabels([])
+        ax.axes.zaxis.set_ticklabels([])
+        ax.w_xaxis.line.set_visible(False)
+        ax.w_yaxis.line.set_visible(False)
+        ax.w_zaxis.line.set_visible(False)
+
+        scatter = ax.scatter(S1, S2 ,S3, c = groups, cmap = 'viridis', marker = 'o',s = 20)
+        legend1 = ax.legend(*scatter.legend_elements(), loc="upper right", title="recalculate count")
+        ax.add_artist(legend1)
+
+        ax.set_box_aspect((1,1,1))
+        plt.tight_layout()
+        ax.view_init(elev = 15, azim = 40)
+        pngfile = name + ".png"
+        file_path = os.path.join(folder_name, pngfile)
+        fig.savefig(file_path)
+
+        plt.close(fig)
+
+    
